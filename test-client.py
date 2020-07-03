@@ -1,20 +1,42 @@
 import sys
+
 import bluetooth
 
 
-def client(host, port):
-    s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+addr = None
 
-    s.connect((host, port))
+if len(sys.argv) < 2:
+    print("No device specified. Searching all nearby bluetooth devices for "
+          "the SampleServer service...")
+else:
+    addr = sys.argv[1]
+    print("Searching for SampleServer on {}...".format(addr))
 
-    while True:
-        message = raw_input('Send:')
-        if not message: return
-        s.send(message)
-        data = s.recv(1024)
-        print('Received: ' + data)
+# search for the SampleServer service
+uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+service_matches = bluetooth.find_service(uuid=uuid, address=addr)
 
-    s.close()
+if len(service_matches) == 0:
+    print("Couldn't find the SampleServer service.")
+    sys.exit(0)
 
+first_match = service_matches[0]
+print("matches: " + str(service_matches))
+port = first_match["port"]
+name = first_match["name"]
+host = first_match["host"]
 
-client(sys.argv[1], port=100)
+print("Connecting to \"{}\" on {}".format(name, host))
+
+# Create the client socket
+sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+sock.connect((format(host)[1:].strip('\''), port))
+
+print("Connected. Type something...")
+while True:
+    data = input()
+    if not data:
+        break
+    sock.send(data)
+
+sock.close()
