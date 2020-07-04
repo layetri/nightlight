@@ -1,11 +1,9 @@
 # Importing the Bluetooth Socket library
 import bluetooth
-# Importing the GPIO library to use the GPIO pins of Raspberry pi
-import RPi.GPIO as GPIO
+from gpiozero import RGBLED
+from colorzero import Color
 
-led_pin = 21  # Initializing pin 40 for led
-GPIO.setmode(GPIO.BCM)  # Using BCM numbering
-GPIO.setup(led_pin, GPIO.OUT)  # Declaring the pin 40 as output pin
+led = RGBLED(26, 6, 5, active_high=True, initial_value=Color(130, 200, 40))
 host = ""
 port = 1  # Raspberry Pi uses port 1 for Bluetooth Communication
 
@@ -32,11 +30,11 @@ try:
         data = client.recv(1024)  # 1024 is the buffer size.
         print(data)
 
-        if data == "1":
-            GPIO.output(led_pin, True)
+        if data == "b'1'":
+            led.on()
             send_data = "Light On "
-        elif data == "0":
-            GPIO.output(led_pin, False)
+        elif data == "b'0'":
+            led.off()
             send_data = "Light Off "
         else:
             send_data = "Type 1 or 0 "
@@ -44,7 +42,7 @@ try:
         client.send(send_data)
 except:
     # Making all the output pins LOW
-    GPIO.cleanup()
+    led.off()
     # Closing the client and server connection
     client.close()
     server.close()
