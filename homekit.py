@@ -6,7 +6,10 @@ from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_LIGHTBULB
 import pyhap.loader as loader
 from pyhap.accessory_driver import AccessoryDriver
+from gpiozero import RGBLED
+from colorzero import Color
 
+led = RGBLED(26, 6, 5, active_high=True, initial_value=Color(130, 200, 40))
 logging.basicConfig(level=logging.INFO, format="[%(module)s] %(message)s")
 
 
@@ -33,6 +36,10 @@ class Light(Accessory):
         characteristics on the service changes.
         """
         if "On" in char_values:
+            if char_values["On"] == 1:
+                led.on()
+            elif char_values["On"] == 0:
+                led.off()
             print('On changed to: ', char_values["On"])
 
     @Accessory.run_at_interval(3)  # Run this method every 3 seconds
