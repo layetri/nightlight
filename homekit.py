@@ -9,6 +9,7 @@ from pyhap.accessory_driver import AccessoryDriver
 
 logging.basicConfig(level=logging.INFO, format="[%(module)s] %(message)s")
 
+
 class Light(Accessory):
     """Implementation of a mock light accessory."""
 
@@ -24,7 +25,6 @@ class Light(Accessory):
         # Add the services that this Accessory will support with add_preload_service here
         serv_light = self.add_preload_service('Lightbulb')
         self.char_on = serv_light.configure_char('On', value=random.randint(0, 1))
-        self.char_brightness = serv_light.configure_char('Brightness', value=100)
 
         serv_light.setter_callback = self._set_chars
 
@@ -34,8 +34,6 @@ class Light(Accessory):
         """
         if "On" in char_values:
             print('On changed to: ', char_values["On"])
-        if "Brightness" in char_values:
-            print('Brightness changed to: ', char_values["Brightness"])
 
     @Accessory.run_at_interval(3)  # Run this method every 3 seconds
     # The `run` method can be `async` as well
@@ -47,7 +45,6 @@ class Light(Accessory):
         every 3 seconds.
         """
         self.char_on.set_value(random.randint(0, 1))
-        self.char_brightness.set_value(random.randint(1, 100))
 
     # The `stop` method can be `async` as well
     def stop(self):
