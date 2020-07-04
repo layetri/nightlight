@@ -7,6 +7,7 @@ from pyhap.const import CATEGORY_LIGHTBULB
 import pyhap.loader as loader
 from pyhap.accessory_driver import AccessoryDriver
 
+logging.basicConfig(level=logging.INFO, format="[%(module)s] %(message)s")
 
 class Light(Accessory):
     """Implementation of a mock light accessory."""
@@ -58,7 +59,7 @@ class Light(Accessory):
 
 def get_accessory(driver):
     """Call this method to get a standalone Accessory."""
-    return Light(driver, 'MyTempSensor')
+    return Light(driver, 'nightlight')
 
 
 # Start the accessory on port 51826
