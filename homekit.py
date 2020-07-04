@@ -27,7 +27,7 @@ class Light(Accessory):
 
         # Add the services that this Accessory will support with add_preload_service here
         serv_light = self.add_preload_service('Lightbulb')
-        self.char_on = serv_light.configure_char('On', value=random.randint(0, 1))
+        self.char_on = serv_light.configure_char('On', value=0)
 
         serv_light.setter_callback = self._set_chars
 
@@ -42,22 +42,12 @@ class Light(Accessory):
                 led.off()
             print('On changed to: ', char_values["On"])
 
-    @Accessory.run_at_interval(3)  # Run this method every 3 seconds
-    # The `run` method can be `async` as well
-    def run(self):
-        """We override this method to implement what the accessory will do when it is
-        started.
-
-        We set the current temperature to a random number. The decorator runs this method
-        every 3 seconds.
-        """
-        self.char_on.set_value(random.randint(0, 1))
-
     # The `stop` method can be `async` as well
     def stop(self):
         """We override this method to clean up any resources or perform final actions, as
         this is called by the AccessoryDriver when the Accessory is being stopped.
         """
+        led.off()
         print('Stopping accessory.')
 
 
