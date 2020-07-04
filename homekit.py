@@ -1,12 +1,17 @@
+import logging
+import signal
+import random
+
 from pyhap.accessory import Accessory
-from pyhap.const import Category
+from pyhap.const import CATEGORY_LIGHTBULB
 import pyhap.loader as loader
+from pyhap.accessory_driver import AccessoryDriver
 
 
 class Light(Accessory):
     """Implementation of a mock light accessory."""
 
-    category = Category.CATEGORY_LIGHTBULB  # This is for the icon in the iOS Home app.
+    category = CATEGORY_LIGHTBULB  # This is for the icon in the iOS Home app.
 
     def __init__(self, *args, **kwargs):
         """Here, we just store a reference to the on and brightness characteristics and
@@ -31,7 +36,7 @@ class Light(Accessory):
         if "Brightness" in char_values:
             print('Brightness changed to: ', char_values["Brightness"])
 
-    @Acessory.run_at_interval(3)  # Run this method every 3 seconds
+    @Accessory.run_at_interval(3)  # Run this method every 3 seconds
     # The `run` method can be `async` as well
     def run(self):
         """We override this method to implement what the accessory will do when it is
@@ -49,3 +54,22 @@ class Light(Accessory):
         this is called by the AccessoryDriver when the Accessory is being stopped.
         """
         print('Stopping accessory.')
+
+
+def get_accessory(driver):
+    """Call this method to get a standalone Accessory."""
+    return Light(driver, 'MyTempSensor')
+
+
+# Start the accessory on port 51826
+driver = AccessoryDriver(port=51826)
+
+# Change `get_accessory` to `get_bridge` if you want to run a Bridge.
+driver.add_accessory(accessory=get_accessory(driver))
+
+# We want SIGTERM (terminate) to be handled by the driver itself,
+# so that it can gracefully stop the accessory, server and advertising.
+signal.signal(signal.SIGTERM, driver.signal_handler)
+
+# Start it!
+driver.start()
