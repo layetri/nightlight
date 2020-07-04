@@ -22,7 +22,7 @@ class Light(Accessory):
 
         # Add the services that this Accessory will support with add_preload_service here
         serv_light = self.add_preload_service('Lightbulb')
-        self.char_on = serv_light.configure_char('On', value=self._state)
+        self.char_on = serv_light.configure_char('On', value=random.randint(0, 1))
         self.char_brightness = serv_light.configure_char('Brightness', value=100)
 
         serv_light.setter_callback = self._set_chars
