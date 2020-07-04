@@ -28,12 +28,13 @@ try:
     while True:
         # Receiving the data.
         data = client.recv(1024)  # 1024 is the buffer size.
+        data = data.decode('utf-8')
         print(data)
 
-        if data == bytes(1):
+        if data == '1':
             led.on()
             send_data = "Light On "
-        elif data == bytes(0):
+        elif data == '0':
             led.off()
             send_data = "Light Off "
         else:
