@@ -30,10 +30,10 @@ try:
         data = client.recv(1024)  # 1024 is the buffer size.
         print(data)
 
-        if data == "b'1'":
+        if data == bytes(1):
             led.on()
             send_data = "Light On "
-        elif data == "b'0'":
+        elif data == bytes(0):
             led.off()
             send_data = "Light Off "
         else:
